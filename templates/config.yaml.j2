@@ -1,0 +1,27 @@
+# Foreman proxy to which reports should be uploaded
+:server: '{{ foreman_proxy_server }}'
+:port: {{ foreman_proxy_port }}
+
+## SSL specific options ##
+# Client CA file.
+# It could be Puppet CA certificate (e.g., '/var/lib/puppet/ssl/certs/ca.pem')
+# Or (recommended for client reporting to Katello) subscription manager CA file, (e.g., '/etc/rhsm/ca/katello-server-ca.pem')
+:ca_file: '{{ ca_file }}'
+# Client host certificate.
+# It could be Puppet agent host certificate (e.g., '/var/lib/puppet/ssl/certs/myhost.example.com.pem')
+# Or (recommended for client reporting to Katello) consumer certificate (e.g., '/etc/pki/consumer/cert.pem')
+:host_certificate: '{{ host_certificate }}'
+# Client private key
+# It could be Puppet agent private key (e.g., '/var/lib/puppet/ssl/private_keys/myhost.example.com.pem')
+# Or (recommended for client reporting to Katello) consumer private key (e.g., '/etc/pki/consumer/cert.pem')
+:host_private_key: '{{ host_private_key }}'
+
+# policy (key is id as in Foreman)
+{% for policy in openscap_policies %}
+{{ policy.policy_id }}:
+  :profile: '{{ policy.profile_id }}'
+  :content_path: '{{ policy.content_path }}'
+  # Download path
+  # A path to download SCAP content from proxy
+  :download_path: '{{ policy.download_path }}'
+{% endfor %}
