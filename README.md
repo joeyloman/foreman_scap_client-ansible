@@ -27,6 +27,21 @@ If you want to use the default SCAP content you can add this by executing the fo
 
 Go to the Policies section in the Satellite web UI under the Hosts menu. Create a new policy  named "rhel7" by clicking the "New Compliance Policy" button. Select the "SCAP content" and the "XCCDF Profile". The schedule settings are not important because we configure this in the playbook. Select the locations and organizations. The Hostgroups are also not important because we don't use this in the playbook. Save the policy.
 
+### Creating the OpenSCAP viewer role and openscap service user
+
+To query the Satellite API and view only the OpenSCAP policies and contents, create the following role:
+
+    hammer role create --name "OpenSCAP viewer"
+    hammer filter create --role "OpenSCAP viewer" --permissions "view_policies"
+    hammer filter create --role "OpenSCAP viewer" --permissions "view_scap_contents"
+
+And the service user:
+
+    hammer user create --login "openscap" --auth-source-id 1 --password "VerySecretPassword" \
+      --mail "openscap@localhost" --timezone "UTC" --locations "DC1" --organizations "Example"
+
+    hammer user add-role --login "openscap" --role "OpenSCAP viewer"
+
 ## Playbook configuration
 
 Edit the group\_vars/all file and configure the variables, for example:
