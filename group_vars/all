@@ -1,11 +1,15 @@
 ---
+foreman_server:       <foreman host>
 foreman_proxy_server: <foreman proxy host>
 foreman_proxy_port:   9090
+foreman_username:     <foreman username>
+foreman_password:     <foreman password>
 ca_file:              /etc/rhsm/ca/katello-server-ca.pem
 host_certificate:     /etc/pki/consumer/cert.pem
 host_private_key:     /etc/pki/consumer/key.pem
+policy_name:          <openscap policy name>
 
-satellite_version:    6.2
+satellite_version:    6.4
 
 # cron settings
 minute: "*"
@@ -13,15 +17,3 @@ hour: "*"
 day: "*"
 weekday: "1"
 month: "*"
-
-openscap_policies_rhel6:
-  - policy_id: 1
-    profile_id: xccdf_org.ssgproject.content_profile_stig-rhel6-server-upstream
-    content_path: /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
-    download_path: /compliance/policies/1/content
-
-openscap_policies_rhel7:
-  - policy_id: 2
-    profile_id: xccdf_org.ssgproject.content_profile_stig-rhel7-server-upstream
-    content_path: /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
-    download_path: /compliance/policies/2/content

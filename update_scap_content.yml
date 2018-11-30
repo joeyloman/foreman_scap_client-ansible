@@ -1,15 +1,9 @@
 ---
+- import_playbook: gather_policy_info.yml
+
 - hosts: all
   become: yes
   tasks:
-    - set_fact:
-        openscap_policies: "{{ openscap_policies_rhel6 }}"
-      when: ansible_distribution_major_version|int == 6
-
-    - set_fact:
-        openscap_policies: "{{ openscap_policies_rhel7 }}"
-      when: ansible_distribution_major_version|int == 7
-
     - name: Installing the OpenSCAP client
       yum:
         name: "rubygem-foreman_scap_client"
@@ -22,5 +16,4 @@
         dest: /etc/foreman_scap_client/config.yaml
 
     - name: Running the OpenSCAP client policies
-      shell: "/usr/bin/foreman_scap_client {{ item.policy_id }}"
-      with_items: "{{ openscap_policies }}"
+      command: "/usr/bin/foreman_scap_client {{ hostvars['localhost']['policy']['id'] }}"

@@ -11,17 +11,18 @@
 # It could be Puppet agent host certificate (e.g., '/var/lib/puppet/ssl/certs/myhost.example.com.pem')
 # Or (recommended for client reporting to Katello) consumer certificate (e.g., '/etc/pki/consumer/cert.pem')
 :host_certificate: '{{ host_certificate }}'
+#
 # Client private key
 # It could be Puppet agent private key (e.g., '/var/lib/puppet/ssl/private_keys/myhost.example.com.pem')
-# Or (recommended for client reporting to Katello) consumer private key (e.g., '/etc/pki/consumer/cert.pem')
+# Or (recommended for client reporting to Katello) consumer private key (e.g., '/etc/pki/consumer/key.pem')
 :host_private_key: '{{ host_private_key }}'
-
 # policy (key is id as in Foreman)
-{% for policy in openscap_policies %}
-{{ policy.policy_id }}:
-  :profile: '{{ policy.profile_id }}'
-  :content_path: '{{ policy.content_path }}'
+
+{{ hostvars['localhost']['policy']['id'] }}:
+  :profile: '{{ hostvars['localhost']['scap_content'] }}'
+  :content_path: '/var/lib/openscap/content/{{ hostvars['localhost']['scapcontents'].json.digest }}.xml'
   # Download path
   # A path to download SCAP content from proxy
-  :download_path: '{{ policy.download_path }}'
-{% endfor %}
+  :download_path: '/compliance/policies/{{ hostvars['localhost']['policy']['id'] }}/content/{{ hostvars['localhost']['scapcontents'].json.digest }}'
+  :tailoring_path: ''
+  :tailoring_download_path: ''

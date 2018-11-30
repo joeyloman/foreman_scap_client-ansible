@@ -1,12 +1,14 @@
 ---
+- import_playbook: gather_policy_info.yml
+
 - hosts: all
   become: yes
   tasks:
-    - name: Creating OpenSCAP cron.d configuration for RHEL 6
+    - name: Creating OpenSCAP cron.d configuration
       cron:
-        name: "Generate OpenSCAP profile for profile {{ item.profile_id }}" 
-        cron_file: /etc/cron.d/openscap
-        job: /usr/bin/foreman_scap_client {{ item.policy_id }}
+        name: "Generate OpenSCAP profile for profile {{ hostvars['localhost']['policy']['id'] }}" 
+        cron_file: /etc/cron.d/foreman_openscap_client
+        job: /usr/bin/foreman_scap_client {{ hostvars['localhost']['policy']['id'] }}
         user: root
         minute: "{{ minute }}"
         hour: "{{ hour }}"
@@ -14,20 +16,3 @@
         weekday: "{{ weekday }}"
         month: "{{ month }}"
         state: present
-      with_items: "{{ openscap_policies_rhel6 }}"
-      when: ansible_distribution_major_version|int == 6
-
-    - name: Creating OpenSCAP cron.d configuration for RHEL 7
-      cron:
-        name: "Generate OpenSCAP profile for profile {{ item.profile_id }}" 
-        cron_file: /etc/cron.d/openscap
-        job: /usr/bin/foreman_scap_client {{ item.policy_id }}
-        user: root
-        minute: "{{ minute }}"
-        hour: "{{ hour }}"
-        day: "{{ day }}" 
-        weekday: "{{ weekday }}" 
-        month: "{{ month }}" 
-        state: present
-      with_items: "{{ openscap_policies_rhel7 }}"
-      when: ansible_distribution_major_version|int == 7

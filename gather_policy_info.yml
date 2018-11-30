@@ -1,0 +1,36 @@
+---
+- name: Getting OpenSCAP policy and content information
+  hosts: localhost
+  become: no
+  tasks:
+    - name: Get Policy parameters
+      uri:
+        url: https://{{ foreman_server }}/api/v2/compliance/policies
+        method: GET
+        user: "{{ foreman_username }}"
+        password:  "{{ foreman_password }}"
+        force_basic_auth: yes
+        body_format: json
+      register: policies
+
+    - name: Build policy {{ policy_name }} parameters
+      set_fact:
+        policy: "{{ item }}"
+      with_items: "{{ policies.json.results }}"
+      when: item.name == policy_name
+
+    - name: Get scap content information
+      uri:
+        url: https://{{ foreman_server }}/api/v2/compliance/scap_contents/{{ policy.scap_content_id }}
+        method: GET
+        user: "{{ foreman_username }}"
+        password: "{{ foreman_password }}"
+        force_basic_auth: yes
+        body_format: json
+      register: scapcontents
+
+    - name: Build Scap content parameters
+      set_fact:
+        scap_content: "{{ item.profile_id }}"
+      with_items: "{{ scapcontents.json.scap_content_profiles }}"
+      when: item.id == policy.scap_content_profile_id
