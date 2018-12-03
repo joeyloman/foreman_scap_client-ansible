@@ -24,5 +24,10 @@
   # Download path
   # A path to download SCAP content from proxy
   :download_path: '/compliance/policies/{{ hostvars['localhost']['policy']['id'] }}/content/{{ hostvars['localhost']['scapcontents'].json.digest }}'
+{% if hostvars['localhost']['policy']['tailoring_file_id'] %}
+  :tailoring_path: '/var/lib/openscap/content/{{ hostvars['localhost']['scapcontents'].json.digest }}-tailored.xml'
+  :tailoring_download_path: '/compliance/policies/{{ hostvars['localhost']['policy']['tailoring_file_id'] }}/tailoring/{{ hostvars['localhost']['scapcontents'].json.digest }}'
+{% else %}
   :tailoring_path: ''
   :tailoring_download_path: ''
+{% endif %}
